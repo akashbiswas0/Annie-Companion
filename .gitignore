@@ -2,7 +2,11 @@ worker/node_modules/
 worker/.dev.vars
 .DS_Store
 *.xcuserstate
+xcuserdata/
 build/
 releases/
 .claude/
 coding-plans/
+
+# Loose screenshot; Codex onboarding images ship via Assets.xcassets
+leanring-buddy/codex-add-project.png
