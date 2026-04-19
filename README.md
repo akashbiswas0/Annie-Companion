@@ -1,12 +1,12 @@
-# Clicky
+# Annie
 
-Clicky is a macOS menu bar companion that lets you talk to an AI assistant while you work. It lives in the status bar, listens when you hold `control + option`, captures the current screen context, and responds with both voice and an on-screen cursor that can point at relevant UI elements.
+Annie is a macOS menu bar companion that lets you talk to an AI assistant while you work. It lives in the status bar, listens when you hold `control + option`, captures the current screen context, and responds with both voice and an on-screen cursor that can point at relevant UI elements.
 
 ## Project Description
 
-Clicky is designed to feel less like a chat window and more like a helpful presence on your desktop. Instead of forcing the user to switch contexts, open a separate app, or type long prompts, Clicky stays available in the menu bar and uses a push-to-talk flow.
+Annie is designed to feel less like a chat window and more like a helpful presence on your desktop. Instead of forcing the user to switch contexts, open a separate app, or type long prompts, Annie stays available in the menu bar and uses a push-to-talk flow.
 
-When the user speaks, Clicky:
+When the user speaks, Annie:
 
 - records microphone audio
 - transcribes the speech
@@ -31,11 +31,11 @@ If a user is trying to understand what is on screen, find a button, navigate an 
 
 This breaks flow and makes the assistant feel disconnected from the actual task.
 
-The problem Clicky solves is: how do you make an AI assistant feel present, screen-aware, and fast enough to help in the middle of real desktop work without turning it into a full-screen app?
+The problem Annie solves is: how do you make an AI assistant feel present, screen-aware, and fast enough to help in the middle of real desktop work without turning it into a full-screen app?
 
 ## Solution
 
-Clicky solves this by combining four ideas:
+Annie solves this by combining four ideas:
 
 1. A menu bar-only app
 
@@ -47,7 +47,7 @@ The user holds `control + option`, speaks naturally, and releases to send. This 
 
 3. Screen-aware reasoning
 
-Clicky captures the screen at the moment of the request, builds structured context around the active app and cursor area, and sends that context to the model so the assistant can answer based on what the user is actually looking at.
+Annie captures the screen at the moment of the request, builds structured context around the active app and cursor area, and sends that context to the model so the assistant can answer based on what the user is actually looking at.
 
 4. Visual pointing
 
@@ -73,11 +73,11 @@ Annie can point at things on screen using `[POINT:x,y:label:screenN]` tags gener
 
 The active transcription provider finalizes the transcript. By default, this is OpenAI transcription through the worker proxy.
 
-4. Clicky captures screen context.
+4. Annie captures screen context.
 
 `CompanionScreenCaptureUtility.swift` captures the display state, identifies which screen contains the cursor, builds a cursor-centered crop, and prepares prioritized screenshots for the model.
 
-5. Clicky sends the request to OpenAI.
+5. Annie sends the request to OpenAI.
 
 `CompanionManager.swift` combines:
 
@@ -90,7 +90,7 @@ and sends them to `OpenAIChatCompletionsClient.swift`, which calls the worker’
 
 6. The model responds with speech text and, when useful, a point tag.
 
-If the response includes something like `[POINT:840,312:save button]`, Clicky parses it and turns it into a real screen coordinate. A second-pass refinement crop can be used to improve pointing accuracy before the cursor moves.
+If the response includes something like `[POINT:840,312:save button]`, Annie parses it and turns it into a real screen coordinate. A second-pass refinement crop can be used to improve pointing accuracy before the cursor moves.
 
 7. Annie speaks and points.
 
@@ -125,7 +125,7 @@ That means the shipped app can stay lightweight and safer, while all third-party
 
 ## Current Experience
 
-Today, Clicky supports:
+Today, Annie supports:
 
 - voice-first interaction from anywhere on macOS
 - screen-aware assistance with multi-monitor support
