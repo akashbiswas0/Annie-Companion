@@ -1,4 +1,4 @@
-# Clicky - Agent Instructions
+# Annie - Agent Instructions
 
 <!-- This is the single source of truth for all AI coding agents. -->
 <!-- AGENTS.md spec: https://github.com/agentsmd/agents.md — supported by Claude Code, Cursor, Copilot, Gemini CLI, and others. -->
@@ -21,7 +21,7 @@ All API keys live on a Cloudflare Worker proxy — nothing sensitive ships in th
 - **Voice Input**: Push-to-talk via `AVAudioEngine` + pluggable transcription-provider layer. System-wide keyboard shortcut via listen-only CGEvent tap.
 - **Element Pointing**: The assistant embeds `[POINT:x,y:label:screenN]` tags in responses. The app parses them, can run a second-pass zoomed crop refinement for better accuracy, maps coordinates to the correct monitor, and animates the blue cursor along a bezier arc to the target.
 - **Concurrency**: `@MainActor` isolation, async/await throughout
-- **Analytics**: PostHog via `ClickyAnalytics.swift`
+- **Analytics**: PostHog via `AnnieAnalytics.swift`
 
 ### API Proxy (Cloudflare Worker)
 
@@ -47,7 +47,7 @@ Optional worker secret: `ASSEMBLYAI_API_KEY` when using the alternate AssemblyAI
 
 **Shared URLSession for AssemblyAI**: A single long-lived `URLSession` is shared across all AssemblyAI streaming sessions (owned by the provider, not the session). Creating and invalidating a URLSession per session corrupts the OS connection pool and causes "Socket is not connected" errors after a few rapid reconnections.
 
-**Transient Cursor Mode**: When "Show Clicky" is off, pressing the hotkey fades in the cursor overlay for the duration of the interaction (recording → response → TTS → optional pointing), then fades it out automatically after 1 second of inactivity.
+**Transient Cursor Mode**: When "Show Annie" is off, pressing the hotkey fades in the cursor overlay for the duration of the interaction (recording → response → TTS → optional pointing), then fades it out automatically after 1 second of inactivity.
 
 ## Key Files
 
@@ -71,7 +71,7 @@ Optional worker secret: `ASSEMBLYAI_API_KEY` when using the alternate AssemblyAI
 | `OpenAITextToSpeechClient.swift` | ~277 | OpenAI TTS client. Supports both single-shot speech and queued chunk playback, prefetches the next chunk while audio is playing, and exposes `isPlaying` for transient cursor scheduling. |
 | `StreamingSpeechTextAccumulator.swift` | ~204 | Converts streamed assistant text into sentence-sized speech chunks while holding back trailing text and stripping partial/final `[POINT:...]` tags so they never leak into TTS. |
 | `DesignSystem.swift` | ~880 | Design system tokens — colors, corner radii, shared styles. All UI references `DS.Colors`, `DS.CornerRadius`, etc. |
-| `ClickyAnalytics.swift` | ~121 | PostHog analytics integration for usage tracking. |
+| `AnnieAnalytics.swift` | ~121 | PostHog analytics integration for usage tracking. |
 | `WindowPositionManager.swift` | ~262 | Window placement logic, Screen Recording permission flow, and accessibility permission helpers. |
 | `AppBundleConfiguration.swift` | ~28 | Runtime configuration reader for keys stored in the app bundle Info.plist. |
 | `worker/src/index.ts` | ~170 | Cloudflare Worker proxy. Four routes: `/chat` (OpenAI), `/transcribe` (OpenAI speech-to-text), `/tts` (OpenAI text-to-speech), `/transcribe-token` (AssemblyAI temp token). |
