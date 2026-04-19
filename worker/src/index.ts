@@ -12,34 +12,12 @@
 
 interface Env {
   OPENAI_API_KEY: string;
-  /** Optional; required only for POST /transcribe-token */
-  ASSEMBLYAI_API_KEY?: string;
+  ASSEMBLYAI_API_KEY: string;
 }
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
-
-    if (url.pathname === "/" || url.pathname === "/health") {
-      if (request.method === "GET") {
-        return new Response(
-          JSON.stringify({
-            service: "clicky-proxy",
-            routes: [
-              "POST /chat → OpenAI chat completions (SSE)",
-              "POST /transcribe → OpenAI audio transcriptions",
-              "POST /tts → OpenAI speech",
-              "POST /transcribe-token → AssemblyAI streaming token",
-            ],
-          }),
-          {
-            status: 200,
-            headers: { "content-type": "application/json; charset=utf-8" },
-          }
-        );
-      }
-      return new Response("Method not allowed", { status: 405 });
-    }
 
     if (request.method !== "POST") {
       return new Response("Method not allowed", { status: 405 });
@@ -134,18 +112,6 @@ async function handleTranscription(request: Request, env: Env): Promise<Response
 }
 
 async function handleTranscribeToken(env: Env): Promise<Response> {
-  if (!env.ASSEMBLYAI_API_KEY) {
-    return new Response(
-      JSON.stringify({
-        error: "AssemblyAI is not configured on this worker",
-      }),
-      {
-        status: 503,
-        headers: { "content-type": "application/json; charset=utf-8" },
-      }
-    );
-  }
-
   const response = await fetch(
     "https://streaming.assemblyai.com/v3/token?expires_in_seconds=480",
     {
