@@ -1,6 +1,6 @@
 # Annie
 
-Annie is a macOS menu bar companion that lets you talk to an AI assistant while you work. It lives in the status bar, listens when you hold `control + option`, captures the current screen context, and responds with both voice and an on-screen cursor that can point at relevant UI elements.
+Annie is a macOS menu bar companion that lets you talk to an AI assistant while you work. It lives in the status bar, opens a custom floating panel from the menu bar, listens when you hold `control + option`, captures the current screen context, and responds with both voice and an on-screen cursor that can point at relevant UI elements.
 
 ## Project Description
 
@@ -9,7 +9,7 @@ Annie is designed to feel less like a chat window and more like a helpful presen
 When the user speaks, Annie:
 
 - records microphone audio
-- transcribes the speech
+- transcribes the speech with a pluggable provider layer
 - captures the relevant screen context
 - sends the transcript and screenshots through a Cloudflare Worker proxy to OpenAI
 - streams back a response
@@ -71,7 +71,7 @@ Annie can point at things on screen using `[POINT:x,y:label:screenN]` tags gener
 
 3. The user releases the shortcut.
 
-The active transcription provider finalizes the transcript. By default, this is OpenAI transcription through the worker proxy.
+The active transcription provider finalizes the transcript. OpenAI upload transcription is the default, with AssemblyAI streaming and Apple Speech available as alternate providers.
 
 4. Annie captures screen context.
 
@@ -94,16 +94,20 @@ If the response includes something like `[POINT:840,312:save button]`, Annie par
 
 7. Annie speaks and points.
 
-`OpenAITextToSpeechClient.swift` calls the worker’s `/tts` route and plays the response aloud. `OverlayWindow.swift` handles the floating cursor overlay, waveform, spinner, and the pointing animation across monitors.
+`StreamingSpeechTextAccumulator.swift` turns the streamed assistant response into speakable chunks while keeping `[POINT:...]` tags out of TTS. `OpenAITextToSpeechClient.swift` calls the worker’s `/tts` route and plays the response aloud. `OverlayWindow.swift` handles the floating cursor overlay, waveform, spinner, and the pointing animation across monitors.
 
 ## Core Components
 
 - `CompanionManager.swift`: the central app state machine
+- `MenuBarPanelManager.swift`: status bar item and floating panel lifecycle
 - `BuddyDictationManager.swift`: push-to-talk recording and transcript lifecycle
+- `BuddyTranscriptionProvider.swift`: provider selection for OpenAI, AssemblyAI, and Apple Speech
 - `CompanionScreenCaptureUtility.swift`: screenshot capture and screen-understanding context
 - `OpenAIChatCompletionsClient.swift`: streaming chat requests
+- `StreamingSpeechTextAccumulator.swift`: converts streamed text into safe, speakable TTS chunks
 - `OpenAITextToSpeechClient.swift`: text-to-speech playback
 - `OverlayWindow.swift`: Annie’s overlay, voice states, and pointing animation
+- `WindowPositionManager.swift`: permission helpers and window placement logic
 - `worker/src/index.ts`: Cloudflare Worker proxy for OpenAI and AssemblyAI
 
 ## Why The Worker Exists
@@ -129,9 +133,11 @@ Today, Annie supports:
 
 - voice-first interaction from anywhere on macOS
 - screen-aware assistance with multi-monitor support
+- model switching between `gpt-5.4` and `gpt-5`
+- OpenAI transcription by default, with AssemblyAI and Apple Speech fallbacks
 - spoken responses
 - UI element pointing with Annie
 - screenshot command handling
-- onboarding and menu bar controls
+- onboarding, permissions, and menu bar controls
 
 The goal is to make desktop AI assistance feel ambient, fast, and grounded in what the user is doing right now.
