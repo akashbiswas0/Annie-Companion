@@ -1,6 +1,6 @@
 # Annie
 
-Annie is a macOS menu bar companion for screen-aware, voice-first AI help. It lives in the status bar, listens while you hold `control + option`, captures the current screen context, and responds with spoken guidance plus an on-screen cursor that can point at relevant UI elements.
+Annie is a macOS companion for screen-aware, voice-first AI help. It lives in the status bar, listens while you hold `control + option`, captures the current screen context, and responds with spoken guidance plus an on-screen cursor that can point at relevant UI elements.
 
 ## What It Does
 
